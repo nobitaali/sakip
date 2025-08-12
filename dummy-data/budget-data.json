@@ -1,0 +1,132 @@
+{
+  "budget_summary": {
+    "2024": {
+      "total_pagu": 2800000000000,
+      "total_realisasi": 2598400000000,
+      "absorption_rate": 92.8,
+      "by_category": {
+        "belanja_pegawai": {
+          "pagu": 1400000000000,
+          "realisasi": 1379000000000,
+          "percentage": 98.5
+        },
+        "belanja_barang": {
+          "pagu": 700000000000,
+          "realisasi": 625100000000,
+          "percentage": 89.3
+        },
+        "belanja_modal": {
+          "pagu": 500000000000,
+          "realisasi": 428500000000,
+          "percentage": 85.7
+        },
+        "belanja_bantuan": {
+          "pagu": 200000000000,
+          "realisasi": 188400000000,
+          "percentage": 94.2
+        }
+      },
+      "monthly_absorption": [
+        {"month": "Jan", "cumulative": 8.5, "monthly": 8.5},
+        {"month": "Feb", "cumulative": 16.2, "monthly": 7.7},
+        {"month": "Mar", "cumulative": 23.8, "monthly": 7.6},
+        {"month": "Apr", "cumulative": 32.1, "monthly": 8.3},
+        {"month": "Mei", "cumulative": 41.5, "monthly": 9.4},
+        {"month": "Jun", "cumulative": 48.7, "monthly": 7.2},
+        {"month": "Jul", "cumulative": 56.3, "monthly": 7.6},
+        {"month": "Ags", "cumulative": 64.8, "monthly": 8.5},
+        {"month": "Sep", "cumulative": 72.1, "monthly": 7.3},
+        {"month": "Okt", "cumulative": 81.4, "monthly": 9.3},
+        {"month": "Nov", "cumulative": 88.9, "monthly": 7.5},
+        {"month": "Des", "cumulative": 92.8, "monthly": 3.9}
+      ]
+    }
+  },
+  "opd_budget_details": [
+    {
+      "opd_id": 1,
+      "opd_name": "Dinas Pendidikan",
+      "pagu": 450000000000,
+      "realisasi": 428000000000,
+      "percentage": 95.1,
+      "programs": [
+        {
+          "name": "Program Pendidikan Dasar",
+          "pagu": 200000000000,
+          "realisasi": 190000000000,
+          "activities": [
+            {
+              "name": "Pembangunan Sekolah Baru",
+              "pagu": 50000000000,
+              "realisasi": 42000000000
+            },
+            {
+              "name": "Rehabilitasi Sekolah",
+              "pagu": 30000000000,
+              "realisasi": 28000000000
+            }
+          ]
+        },
+        {
+          "name": "Program Pendidikan Menengah",
+          "pagu": 150000000000,
+          "realisasi": 142000000000,
+          "activities": [
+            {
+              "name": "Peningkatan Kualitas Guru",
+              "pagu": 75000000000,
+              "realisasi": 71000000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "opd_id": 2,
+      "opd_name": "Dinas Kesehatan",
+      "pagu": 380000000000,
+      "realisasi": 349000000000,
+      "percentage": 91.8,
+      "programs": [
+        {
+          "name": "Program Kesehatan Masyarakat",
+          "pagu": 200000000000,
+          "realisasi": 184000000000,
+          "activities": [
+            {
+              "name": "Peningkatan Fasilitas Puskesmas",
+              "pagu": 100000000000,
+              "realisasi": 92000000000
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "efficiency_analysis": {
+    "cost_per_output": [
+      {
+        "indicator": "Biaya per Siswa",
+        "value": 2500000,
+        "benchmark": 3000000,
+        "efficiency_score": 120
+      },
+      {
+        "indicator": "Biaya per Pasien",
+        "value": 150000,
+        "benchmark": 180000,
+        "efficiency_score": 120
+      }
+    ],
+    "variance_analysis": [
+      {
+        "category": "Belanja Modal",
+        "planned": 500000000000,
+        "actual": 428500000000,
+        "variance": -71500000000,
+        "variance_percentage": -14.3,
+        "reason": "Keterlambatan pengadaan barang"
+      }
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "opd_list": [
+    {
+      "id": 1,
+      "name": "Dinas Pendidikan",
+      "code": "DIKNAS",
+      "head": "Dr. Ahmad Suryanto, M.Pd",
+      "contact": {
+        "phone": "0274-123456",
+        "email": "diknas@pemda.go.id",
+        "address": "Jl. Pendidikan No. 1, Yogyakarta"
+      },
+      "sakip_score": 89.5,
+      "performance_indicators": [
+        {
+          "name": "Angka Partisipasi Sekolah",
+          "target": 85,
+          "realisasi": 78.3,
+          "satuan": "Persen",
+          "status": "warning"
+        },
+        {
+          "name": "Rasio Guru-Siswa",
+          "target": 20,
+          "realisasi": 18.5,
+          "satuan": "Rasio",
+          "status": "success"
+        }
+      ],
+      "budget": {
+        "pagu": 450000000000,
+        "realisasi": 428000000000,
+        "percentage": 95.1
+      }
+    },
+    {
+      "id": 2,
+      "name": "Dinas Kesehatan",
+      "code": "DINKES",
+      "head": "dr. Siti Nurhaliza, Sp.PK",
+      "contact": {
+        "phone": "0274-234567",
+        "email": "dinkes@pemda.go.id",
+        "address": "Jl. Kesehatan No. 2, Yogyakarta"
+      },
+      "sakip_score": 87.3,
+      "performance_indicators": [
+        {
+          "name": "Angka Kematian Bayi",
+          "target": 15,
+          "realisasi": 12.5,
+          "satuan": "Per 1000 kelahiran",
+          "status": "success"
+        },
+        {
+          "name": "Cakupan Imunisasi",
+          "target": 95,
+          "realisasi": 92.8,
+          "satuan": "Persen",
+          "status": "warning"
+        }
+      ],
+      "budget": {
+        "pagu": 380000000000,
+        "realisasi": 349000000000,
+        "percentage": 91.8
+      }
+    },
+    {
+      "id": 3,
+      "name": "Dinas Pekerjaan Umum",
+      "code": "PUPR",
+      "head": "Ir. Bambang Sutrisno, M.T",
+      "contact": {
+        "phone": "0274-345678",
+        "email": "pupr@pemda.go.id",
+        "address": "Jl. Infrastruktur No. 3, Yogyakarta"
+      },
+      "sakip_score": 85.7,
+      "performance_indicators": [
+        {
+          "name": "Panjang Jalan Dalam Kondisi Baik",
+          "target": 80,
+          "realisasi": 75.2,
+          "satuan": "Persen",
+          "status": "warning"
+        },
+        {
+          "name": "Jumlah Jembatan Dibangun",
+          "target": 5,
+          "realisasi": 4,
+          "satuan": "Unit",
+          "status": "warning"
+        }
+      ],
+      "budget": {
+        "pagu": 320000000000,
+        "realisasi": 281000000000,
+        "percentage": 87.8
+      }
+    },
+    {
+      "id": 4,
+      "name": "Dinas Sosial",
+      "code": "DINSOS",
+      "head": "Dra. Retno Wulandari, M.Si",
+      "contact": {
+        "phone": "0274-456789",
+        "email": "dinsos@pemda.go.id",
+        "address": "Jl. Sosial No. 4, Yogyakarta"
+      },
+      "sakip_score": 83.2,
+      "performance_indicators": [
+        {
+          "name": "Jumlah Keluarga Miskin Terentaskan",
+          "target": 1000,
+          "realisasi": 850,
+          "satuan": "KK",
+          "status": "warning"
+        },
+        {
+          "name": "Cakupan Bantuan Sosial",
+          "target": 90,
+          "realisasi": 88.5,
+          "satuan": "Persen",
+          "status": "warning"
+        }
+      ],
+      "budget": {
+        "pagu": 180000000000,
+        "realisasi": 162000000000,
+        "percentage": 90.0
+      }
+    },
+    {
+      "id": 5,
+      "name": "Dinas Pertanian",
+      "code": "DISTAN",
+      "head": "Ir. Agus Priyanto, M.P",
+      "contact": {
+        "phone": "0274-567890",
+        "email": "distan@pemda.go.id",
+        "address": "Jl. Pertanian No. 5, Yogyakarta"
+      },
+      "sakip_score": 81.9,
+      "performance_indicators": [
+        {
+          "name": "Produktivitas Padi",
+          "target": 6.5,
+          "realisasi": 6.2,
+          "satuan": "Ton/Ha",
+          "status": "warning"
+        },
+        {
+          "name": "Luas Lahan Irigasi",
+          "target": 15000,
+          "realisasi": 14500,
+          "satuan": "Ha",
+          "status": "warning"
+        }
+      ],
+      "budget": {
+        "pagu": 150000000000,
+        "realisasi": 131000000000,
+        "percentage": 87.3
+      }
+    }
+  ]
+}

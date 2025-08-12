@@ -1,0 +1,169 @@
+{
+  "performance_tree": {
+    "rpjmd": {
+      "id": "rpjmd-2021-2026",
+      "name": "RPJMD Kabupaten XYZ 2021-2026",
+      "period": "2021-2026",
+      "vision": "Terwujudnya Kabupaten XYZ yang Maju, Sejahtera, dan Berkelanjutan",
+      "mission": [
+        "Meningkatkan kualitas sumber daya manusia",
+        "Mengembangkan perekonomian daerah",
+        "Memperkuat infrastruktur dan konektivitas",
+        "Menjaga kelestarian lingkungan hidup"
+      ],
+      "tujuan": [
+        {
+          "id": "tujuan-1",
+          "name": "Meningkatkan Kualitas Pendidikan dan Kesehatan",
+          "target_score": 85,
+          "current_score": 82.5,
+          "sasaran": [
+            {
+              "id": "sasaran-1-1",
+              "name": "Meningkatkan Angka Partisipasi Sekolah",
+              "target": 85,
+              "realisasi": 78.3,
+              "satuan": "Persen",
+              "program": [
+                {
+                  "id": "program-1-1-1",
+                  "name": "Program Pendidikan Dasar",
+                  "kegiatan": [
+                    {
+                      "id": "kegiatan-1-1-1-1",
+                      "name": "Pembangunan Sekolah Baru",
+                      "target": 10,
+                      "realisasi": 8,
+                      "satuan": "Unit",
+                      "anggaran": {
+                        "pagu": 5000000000,
+                        "realisasi": 4200000000
+                      },
+                      "timeline": {
+                        "start": "2024-01-01",
+                        "end": "2024-12-31"
+                      },
+                      "progress_monthly": [
+                        {"month": "Jan", "target": 1, "realisasi": 0},
+                        {"month": "Feb", "target": 2, "realisasi": 1},
+                        {"month": "Mar", "target": 3, "realisasi": 2},
+                        {"month": "Apr", "target": 4, "realisasi": 3},
+                        {"month": "Mei", "target": 5, "realisasi": 4},
+                        {"month": "Jun", "target": 6, "realisasi": 5},
+                        {"month": "Jul", "target": 7, "realisasi": 6},
+                        {"month": "Ags", "target": 8, "realisasi": 6},
+                        {"month": "Sep", "target": 9, "realisasi": 7},
+                        {"month": "Okt", "target": 10, "realisasi": 8},
+                        {"month": "Nov", "target": 10, "realisasi": 8},
+                        {"month": "Des", "target": 10, "realisasi": 8}
+                      ]
+                    },
+                    {
+                      "id": "kegiatan-1-1-1-2",
+                      "name": "Rehabilitasi Sekolah Rusak",
+                      "target": 25,
+                      "realisasi": 23,
+                      "satuan": "Unit",
+                      "anggaran": {
+                        "pagu": 3000000000,
+                        "realisasi": 2800000000
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sasaran-1-2",
+              "name": "Menurunkan Angka Kematian Bayi",
+              "target": 15,
+              "realisasi": 12.5,
+              "satuan": "Per 1000 kelahiran",
+              "program": [
+                {
+                  "id": "program-1-2-1",
+                  "name": "Program Kesehatan Ibu dan Anak",
+                  "kegiatan": [
+                    {
+                      "id": "kegiatan-1-2-1-1",
+                      "name": "Peningkatan Fasilitas Puskesmas",
+                      "target": 15,
+                      "realisasi": 14,
+                      "satuan": "Unit",
+                      "anggaran": {
+                        "pagu": 2500000000,
+                        "realisasi": 2300000000
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tujuan-2",
+          "name": "Mengembangkan Perekonomian Daerah",
+          "target_score": 80,
+          "current_score": 75.8,
+          "sasaran": [
+            {
+              "id": "sasaran-2-1",
+              "name": "Meningkatkan PDRB per Kapita",
+              "target": 5.5,
+              "realisasi": 4.8,
+              "satuan": "Persen",
+              "program": [
+                {
+                  "id": "program-2-1-1",
+                  "name": "Program Pengembangan UMKM",
+                  "kegiatan": [
+                    {
+                      "id": "kegiatan-2-1-1-1",
+                      "name": "Pelatihan Kewirausahaan",
+                      "target": 500,
+                      "realisasi": 485,
+                      "satuan": "Orang",
+                      "anggaran": {
+                        "pagu": 1500000000,
+                        "realisasi": 1450000000
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "quarterly_progress": {
+    "2024": {
+      "Q1": {
+        "overall_performance": 78.5,
+        "budget_absorption": 23.2,
+        "indicators_on_track": 28,
+        "indicators_at_risk": 12
+      },
+      "Q2": {
+        "overall_performance": 81.3,
+        "budget_absorption": 48.7,
+        "indicators_on_track": 32,
+        "indicators_at_risk": 8
+      },
+      "Q3": {
+        "overall_performance": 83.8,
+        "budget_absorption": 72.1,
+        "indicators_on_track": 35,
+        "indicators_at_risk": 5
+      },
+      "Q4": {
+        "overall_performance": 85.2,
+        "budget_absorption": 92.8,
+        "indicators_on_track": 36,
+        "indicators_at_risk": 4
+      }
+    }
+  }
+}

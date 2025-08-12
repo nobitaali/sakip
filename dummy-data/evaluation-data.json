@@ -1,0 +1,217 @@
+{
+  "evaluation_results": {
+    "2024": {
+      "internal_evaluation": [
+        {
+          "opd_id": 1,
+          "opd_name": "Dinas Pendidikan",
+          "evaluation_date": "2024-12-15",
+          "evaluator": "Tim Evaluasi Internal",
+          "components": {
+            "perencanaan": {
+              "score": 85,
+              "findings": [
+                "Dokumen perencanaan lengkap dan sesuai format",
+                "Indikator kinerja sudah SMART"
+              ],
+              "recommendations": [
+                "Perlu peningkatan koordinasi dengan BAPPEDA",
+                "Perbaiki timeline pelaksanaan kegiatan"
+              ]
+            },
+            "pengukuran": {
+              "score": 82,
+              "findings": [
+                "Sistem pengukuran sudah berjalan baik",
+                "Data capaian tersedia dan akurat"
+              ],
+              "recommendations": [
+                "Tingkatkan frekuensi monitoring",
+                "Perbaiki kualitas data pendukung"
+              ]
+            },
+            "pelaporan": {
+              "score": 88,
+              "findings": [
+                "LKJIP tepat waktu dan berkualitas",
+                "Analisis capaian mendalam"
+              ],
+              "recommendations": [
+                "Tambahkan analisis efisiensi",
+                "Perkuat rekomendasi perbaikan"
+              ]
+            },
+            "evaluasi": {
+              "score": 80,
+              "findings": [
+                "Evaluasi internal dilakukan rutin",
+                "Tindak lanjut rekomendasi baik"
+              ],
+              "recommendations": [
+                "Libatkan stakeholder eksternal",
+                "Dokumentasi evaluasi lebih sistematis"
+              ]
+            },
+            "perbaikan": {
+              "score": 78,
+              "findings": [
+                "Upaya perbaikan sudah dilakukan",
+                "Inovasi pelayanan mulai dikembangkan"
+              ],
+              "recommendations": [
+                "Percepat implementasi perbaikan",
+                "Tingkatkan inovasi pelayanan"
+              ]
+            }
+          },
+          "overall_score": 82.6,
+          "grade": "B",
+          "status": "completed"
+        },
+        {
+          "opd_id": 2,
+          "opd_name": "Dinas Kesehatan",
+          "evaluation_date": "2024-12-10",
+          "evaluator": "Tim Evaluasi Internal",
+          "components": {
+            "perencanaan": 88,
+            "pengukuran": 85,
+            "pelaporan": 90,
+            "evaluasi": 84,
+            "perbaikan": 82
+          },
+          "overall_score": 85.8,
+          "grade": "A-",
+          "status": "completed"
+        }
+      ],
+      "external_evaluation": {
+        "kemenpan_rb": {
+          "evaluation_date": "2024-11-20",
+          "evaluator": "Tim Evaluasi KemenPANRB",
+          "overall_score": 78.5,
+          "grade": "B+",
+          "components": {
+            "akuntabilitas_kinerja": 80,
+            "akuntabilitas_keuangan": 78,
+            "akuntabilitas_manfaat": 76
+          },
+          "recommendations": [
+            "Perkuat sistem monitoring dan evaluasi",
+            "Tingkatkan kualitas pelaporan kinerja",
+            "Perbaiki analisis efektivitas program"
+          ]
+        }
+      }
+    }
+  },
+  "lke_templates": [
+    {
+      "id": "lke_2024",
+      "name": "Lembar Kerja Evaluasi 2024",
+      "version": "1.0",
+      "sections": [
+        {
+          "section": "A",
+          "name": "Perencanaan Kinerja",
+          "weight": 20,
+          "criteria": [
+            {
+              "code": "A.1",
+              "description": "Rencana strategis disusun dengan baik",
+              "max_score": 5
+            },
+            {
+              "code": "A.2", 
+              "description": "Rencana kerja tahunan selaras dengan renstra",
+              "max_score": 5
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "name": "Pengukuran Kinerja",
+          "weight": 25,
+          "criteria": [
+            {
+              "code": "B.1",
+              "description": "Sistem pengukuran kinerja berfungsi dengan baik",
+              "max_score": 5
+            },
+            {
+              "code": "B.2",
+              "description": "Data kinerja akurat dan dapat dipertanggungjawabkan",
+              "max_score": 5
+            }
+          ]
+        },
+        {
+          "section": "C",
+          "name": "Pelaporan Kinerja",
+          "weight": 25,
+          "criteria": [
+            {
+              "code": "C.1",
+              "description": "LKJIP disusun tepat waktu dan berkualitas",
+              "max_score": 5
+            },
+            {
+              "code": "C.2",
+              "description": "Analisis capaian kinerja mendalam",
+              "max_score": 5
+            }
+          ]
+        },
+        {
+          "section": "D",
+          "name": "Evaluasi Internal",
+          "weight": 15,
+          "criteria": [
+            {
+              "code": "D.1",
+              "description": "Evaluasi internal dilakukan secara berkala",
+              "max_score": 5
+            }
+          ]
+        },
+        {
+          "section": "E",
+          "name": "Perbaikan Kinerja",
+          "weight": 15,
+          "criteria": [
+            {
+              "code": "E.1",
+              "description": "Tindak lanjut rekomendasi evaluasi",
+              "max_score": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evaluation_schedule": {
+    "2024": [
+      {
+        "type": "internal",
+        "opd": "Dinas Pendidikan",
+        "scheduled_date": "2024-12-15",
+        "status": "completed",
+        "evaluator": "Tim Internal"
+      },
+      {
+        "type": "internal", 
+        "opd": "Dinas Kesehatan",
+        "scheduled_date": "2024-12-10",
+        "status": "completed",
+        "evaluator": "Tim Internal"
+      },
+      {
+        "type": "external",
+        "opd": "All OPD",
+        "scheduled_date": "2024-11-20",
+        "status": "completed",
+        "evaluator": "KemenPANRB"
+      }
+    ]
+  }
+}

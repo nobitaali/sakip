@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import { Plus, Upload, Download, FileText, Target, Calendar } from 'lucide-react'
+import CascadingPerformance from '../../components/CascadingPerformance'
+import PerformanceTree from '../../components/PerformanceTree'
 
 const PlanningOverview = () => {
   const [activeTab, setActiveTab] = useState('renstra')
@@ -52,7 +54,10 @@ const PlanningOverview = () => {
           {[
             { id: 'renstra', name: 'Renstra', icon: Target },
             { id: 'renaksi', name: 'Rencana Aksi', icon: Calendar },
-            { id: 'documents', name: 'Dokumen', icon: FileText }
+            { id: 'documents', name: 'Dokumen', icon: FileText },
+                        { id: 'cascading', name: 'Cascading', icon: FileText },
+                          { id: 'pohon-kinerja', name: 'Pohon Kinerja', icon: FileText },
+
           ].map((tab) => (
             <button
               key={tab.id}
@@ -235,6 +240,14 @@ const PlanningOverview = () => {
           </div>
         </div>
       )}
+
+      { activeTab === 'cascading' && 
+        <div className="space-y-6">
+          <CascadingPerformance period={2023} />
+        </div>
+    }
+
+    {activeTab==='pohon-kinerja'&&<PerformanceTree/>}
 
       {activeTab === 'documents' && (
         <div className="card p-6">

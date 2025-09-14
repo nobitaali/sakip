@@ -475,7 +475,7 @@ const PerformanceTree = ({ period = '2024' }) => {
   const [treeData, setTreeData] = useState({ //ultimate outcome bisa lebih dari 1 
     id: '1',
     label: 'Penurunan kemiskinan',
-    type: 'ULTIMATE OUTCOME',
+    type: 'ULTIMATE OUTCOME',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
     achievement: 85.2,
     target: 90,
     status: 'at_risk',
@@ -483,7 +483,7 @@ const PerformanceTree = ({ period = '2024' }) => {
     children: [
       {
         id: '2',
-        label: 'Pembangunan SDM Berkualitas',
+        label: 'Pembangunan SDM Berkualitas', // isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
         type: 'INTERMEDIATE OUTCOME',
         achievement: 78.5,
         target: 85,
@@ -493,7 +493,7 @@ const PerformanceTree = ({ period = '2024' }) => {
           {
             id: '5',
             label: 'Penignkatakan kualitas pendidikan',
-            type: 'IMMEDIATE OUTCOME LEVEL 1',
+            type: 'IMMEDIATE OUTCOME LEVEL 1',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
             achievement: 78.3,
             target: 85,
             status: 'at_risk',
@@ -502,7 +502,7 @@ const PerformanceTree = ({ period = '2024' }) => {
             children: [
               {
                 id: '11',
-                label: 'Peningkatan akses pendidikan',
+                label: 'Peningkatan akses pendidikan',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
                   type: 'IMMEDIATE OUTCOME LEVEL 2',
                 achievement: 78.3,
                 target: 85,

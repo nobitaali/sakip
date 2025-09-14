@@ -370,6 +370,8 @@ const nodeTypes = {
 const CascadingPerformance = ({ period = "2024" }) => {
   // untuk level pemda {}
   // diagramnya sampai leve opd / organisasi perangkat daerah contoh dinas pendidikan,kecamatan,
+  // untuk level atau user opd
+  //diagramnya
 
   const [cascadingData, setCascadingData] = useState({
     id: "1",
@@ -418,12 +420,17 @@ const CascadingPerformance = ({ period = "2024" }) => {
                                 type: "program",
                                 opd: "Dinas Pendidikan",
                                 children: [
-
-                                  {id: "6",
-                            type: "Kegiatan ",
-                            name: "Meningkatkan akses pendidikan",}
-
-
+                                  {
+                                    id: "6",
+                                    type: "Kegiatan ",
+                                    name: "Pengadaan alat penunjang pendidikan ",
+                                    children:[
+                                      {  id: "6",
+                                         opd: "Dinas Pendidikan",
+                                    type: "Sub Kegiatan ",
+                                    name: "Pengadaan laptop",}
+                                    ]
+                                  },
                                 ],
                               },
                             ],

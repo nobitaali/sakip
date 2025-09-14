@@ -472,10 +472,10 @@ const PerformanceNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNo
 };
 
 const PerformanceTree = ({ period = '2024' }) => {
-  const [treeData, setTreeData] = useState({
+  const [treeData, setTreeData] = useState({ //ultimate outcome bisa lebih dari 1 
     id: '1',
-    label: 'Kinerja Keseluruhan Daerah',
-    type: 'VISI',
+    label: 'Penurunan kemiskinan',
+    type: 'ULTIMATE OUTCOME',
     achievement: 85.2,
     target: 90,
     status: 'at_risk',
@@ -484,7 +484,7 @@ const PerformanceTree = ({ period = '2024' }) => {
       {
         id: '2',
         label: 'Pembangunan SDM Berkualitas',
-        type: 'MISI',
+        type: 'INTERMEDIATE OUTCOME',
         achievement: 78.5,
         target: 85,
         status: 'at_risk',
@@ -492,8 +492,8 @@ const PerformanceTree = ({ period = '2024' }) => {
         children: [
           {
             id: '5',
-            label: 'Program Pendidikan',
-            type: 'PROGRAM',
+            label: 'Penignkatakan kualitas pendidikan',
+            type: 'IMMEDIATE OUTCOME LEVEL 1',
             achievement: 78.3,
             target: 85,
             status: 'at_risk',
@@ -502,8 +502,31 @@ const PerformanceTree = ({ period = '2024' }) => {
             children: [
               {
                 id: '11',
+                label: 'Peningkatan akses pendidikan',
+                  type: 'IMMEDIATE OUTCOME LEVEL 2',
+                achievement: 78.3,
+                target: 85,
+                status: 'at_risk',
+                trend: 'up',
+                opd: 'Dinas Pendidikan',
+                children: [{
+                  id: '3',
+                label: 'Jumlah sekolah',
+                type: 'OUTPUT',
+                achievement: 78.3,
+                target: 85,
+                status: 'at_risk',
+                trend: 'up',
+                opd: 'Dinas Pendidikan',
+                }
+
+                  
+                ]
+              },
+              {
+                id: '11',
                 label: 'Angka Partisipasi Sekolah',
-                type: 'IKU',
+                type: 'IMMEDIATE OUTCOME LEVEL 2',
                 achievement: 78.3,
                 target: 85,
                 status: 'at_risk',
@@ -511,6 +534,41 @@ const PerformanceTree = ({ period = '2024' }) => {
                 opd: 'Dinas Pendidikan',
                 children: []
               }
+            ]
+          },
+          {
+            id: '5',
+            label: 'Kualitas kesehatan',
+            type: 'IMMEDIATE OUTCOME',
+            achievement: 78.3,
+            target: 85,
+            status: 'at_risk',
+            trend: 'up',
+            opd: 'Dinas Pendidikan',
+            children: [
+              {
+                id: '11',
+                label: 'Jumlah Rumahsakit',
+                type: 'Outpur',
+                achievement: 78.3,
+                target: 85,
+                status: 'at_risk',
+                trend: 'up',
+                opd: 'Dinas Pendidikan',
+                children: []
+              },
+               {
+                id: '11',
+                label: 'Jumlah Tenaga Medis',
+                type: 'Outpur',
+                achievement: 78.3,
+                target: 85,
+                status: 'at_risk',
+                trend: 'up',
+                opd: 'Dinas Pendidikan',
+                children: []
+              },
+             
             ]
           }
         ]

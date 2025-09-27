@@ -10,8 +10,10 @@ import {
 } from "lucide-react";
 import CascadingPerformance from "../../components/CascadingPerformance";
 import CascadingPerformanceSimple from "../../components/CascadingPerformanceSimple";
+import CascadingPerformanceDiagram from "../../components/CascadingPerformanceDiagram";
 import PerformanceTree from "../../components/PerformanceTree";
 import PerformanceTreeSimple from "../../components/PerformanceTreeSimple";
+import PerformanceTreeDiagram from "../../components/PerformanceTreeDiagram";
 
 // 
 
@@ -180,11 +182,11 @@ const PlanningOverview = () => {
 
       {activeTab === "cascading" && (
         <div className="space-y-6">
-          <CascadingPerformanceSimple />
+          <CascadingPerformanceDiagram />
         </div>
       )}
 
-      {activeTab === "pohon-kinerja" && <PerformanceTreeSimple />}
+      {activeTab === "pohon-kinerja" && <PerformanceTreeDiagram />}
 
       {activeTab === "documents" && (
         <div className="card p-6">

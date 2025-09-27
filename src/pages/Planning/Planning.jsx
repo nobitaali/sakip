@@ -9,7 +9,9 @@ import {
   Calendar,
 } from "lucide-react";
 import CascadingPerformance from "../../components/CascadingPerformance";
+import CascadingPerformanceSimple from "../../components/CascadingPerformanceSimple";
 import PerformanceTree from "../../components/PerformanceTree";
+import PerformanceTreeSimple from "../../components/PerformanceTreeSimple";
 
 // 
 
@@ -178,11 +180,11 @@ const PlanningOverview = () => {
 
       {activeTab === "cascading" && (
         <div className="space-y-6">
-          <CascadingPerformance period={2023} />
+          <CascadingPerformanceSimple />
         </div>
       )}
 
-      {activeTab === "pohon-kinerja" && <PerformanceTree />}
+      {activeTab === "pohon-kinerja" && <PerformanceTreeSimple />}
 
       {activeTab === "documents" && (
         <div className="card p-6">

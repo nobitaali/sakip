@@ -1,32 +1,22 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Handle,
-  Position,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import { Plus, Edit, Trash2, Save, X, Building2, Database, Download } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Edit, Trash2, Save, X, Building2, Database, Download, ChevronDown, ChevronUp } from "lucide-react";
 import { cascadingAPI } from '../utils/supabase';
 
-// Custom Node Component for Cascading Performance
-const CascadingNode = ({ data }) => {
+// Cascading Node Component (similar to PerformanceNode)
+const CascadingNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNode, onDeleteNode }) => {
+  const [isExpanded, setIsExpanded] = useState(level < 3);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [newChild, setNewChild] = useState({
     name: "",
-    type: getNextType(data.type),
+    type: getNextType(node.type),
     description: "",
     opd: "",
   });
   const [editData, setEditData] = useState({
-    name: data.name,
-    description: data.description || "",
-    opd: data.opd || "",
+    name: node.name,
+    description: node.description || "",
+    opd: node.opd || "",
   });
 
   function getNextType(currentType) {
@@ -48,16 +38,16 @@ const CascadingNode = ({ data }) => {
 
   const getTypeColor = (type) => {
     const colors = {
-      visi: "bg-purple-500 text-white border-purple-500",
-      misi: "bg-blue-500 text-white border-blue-500",
-      tujuan: "bg-green-500 text-white border-green-500",
-      sasaran: "bg-yellow-500 text-white border-yellow-500",
-      opd: "bg-red-500 text-white border-red-500",
-      program: "bg-orange-500 text-white border-orange-500",
-      kegiatan: "bg-indigo-500 text-white border-indigo-500",
-      sub_kegiatan: "bg-pink-500 text-white border-pink-500",
+      visi: "bg-purple-500 text-white",
+      misi: "bg-blue-500 text-white",
+      tujuan: "bg-green-500 text-white",
+      sasaran: "bg-yellow-500 text-white",
+      opd: "bg-red-500 text-white",
+      program: "bg-orange-500 text-white",
+      kegiatan: "bg-indigo-500 text-white",
+      sub_kegiatan: "bg-pink-500 text-white",
     };
-    return colors[type] || "bg-gray-500 text-white border-gray-500";
+    return colors[type] || "bg-gray-500 text-white";
   };
 
   const getTypeIcon = (type) => {
@@ -84,13 +74,11 @@ const CascadingNode = ({ data }) => {
   };
 
   const getNodeStyle = (type) => {
-    let baseStyle =
-      "bg-white border-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 p-4 min-w-[280px] max-w-[320px]";
-
+    let baseStyle = "relative bg-white border-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 p-4 min-w-[280px] max-w-[320px]";
+    
     switch (type) {
       case "visi":
-        baseStyle +=
-          " border-purple-500 bg-gradient-to-br from-purple-50 to-purple-100";
+        baseStyle += " border-purple-500 bg-gradient-to-br from-purple-50 to-purple-100";
         break;
       case "misi":
         baseStyle += " border-blue-500";
@@ -107,6 +95,12 @@ const CascadingNode = ({ data }) => {
       case "program":
         baseStyle += " border-orange-500";
         break;
+      case "kegiatan":
+        baseStyle += " border-indigo-500";
+        break;
+      case "sub_kegiatan":
+        baseStyle += " border-pink-500";
+        break;
       default:
         baseStyle += " border-gray-300";
     }
@@ -119,11 +113,12 @@ const CascadingNode = ({ data }) => {
       const childData = {
         ...newChild,
         id: Date.now().toString(),
+        children: []
       };
-      data.onAddChild(data.id, childData);
+      onAddChild(node.id, childData);
       setNewChild({
         name: "",
-        type: getNextType(data.type),
+        type: getNextType(node.type),
         description: "",
         opd: "",
       });
@@ -133,79 +128,84 @@ const CascadingNode = ({ data }) => {
 
   const handleEditNode = () => {
     if (editData.name.trim()) {
-      data.onEditNode(data.id, editData);
+      onEditNode(node.id, editData);
       setShowEditForm(false);
     }
   };
 
-  return (
-    <div className={getNodeStyle(data.type)}>
-      <Handle type="target" position={Position.Top} className="w-2 h-2" />
+  const hasChildren = node.children && node.children.length > 0;
 
-      {/* Action Buttons */}
-      <div className="absolute -top-2 -right-2 flex space-x-1">
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="bg-primary-500 text-white rounded-full p-1 hover:bg-primary-600 transition-colors shadow-md"
-          title="Tambah Child"
-        >
-          <Plus className="h-3 w-3" />
-        </button>
-        <button
-          onClick={() => setShowEditForm(true)}
-          className="bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-colors shadow-md"
-          title="Edit Node"
-        >
-          <Edit className="h-3 w-3" />
-        </button>
-        {data.type !== "visi" && (
+  return (
+    <div className="flex flex-col items-center">
+      {/* Node */}
+      <div className={getNodeStyle(node.type)}>
+        {/* Action Buttons */}
+        <div className="absolute -top-2 -right-2 flex space-x-1">
           <button
-            onClick={() => data.onDeleteNode(data.id)}
-            className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-md"
-            title="Hapus Node"
+            onClick={() => setShowAddForm(true)}
+            className="bg-primary-500 text-white rounded-full p-1 hover:bg-primary-600 transition-colors shadow-md"
+            title="Tambah Child"
           >
-            <Trash2 className="h-3 w-3" />
+            <Plus className="h-3 w-3" />
+          </button>
+          <button
+            onClick={() => setShowEditForm(true)}
+            className="bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-colors shadow-md"
+            title="Edit Node"
+          >
+            <Edit className="h-3 w-3" />
+          </button>
+          {!isRoot && (
+            <button
+              onClick={() => onDeleteNode(node.id)}
+              className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-md"
+              title="Hapus Node"
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        {/* Type Badge */}
+        <div className="flex items-center justify-between mb-3">
+          <span className={`text-xs px-3 py-1 rounded-full font-bold ${getTypeColor(node.type)}`}>
+            {node.type.toUpperCase()}
+          </span>
+          <span className="text-lg">{getTypeIcon(node.type)}</span>
+        </div>
+
+        {/* Title */}
+        <h3 className={`font-bold mb-2 leading-tight ${isRoot ? 'text-lg text-purple-800' : 'text-sm text-gray-900'}`}>
+          {node.name}
+        </h3>
+
+        {/* Description */}
+        {node.description && (
+          <p className="text-xs text-gray-600 mb-2">{node.description}</p>
+        )}
+
+        {/* OPD */}
+        {node.opd && (
+          <div className="flex items-center text-xs text-gray-600 mb-3">
+            <Building2 className="h-3 w-3 mr-1" />
+            {node.opd}
+          </div>
+        )}
+
+        {/* Expand/Collapse Button */}
+        {hasChildren && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-white border-2 border-gray-300 rounded-full p-1 hover:bg-gray-50 transition-colors"
+          >
+            {isExpanded ? (
+              <ChevronUp className="h-4 w-4 text-gray-600" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-600" />
+            )}
           </button>
         )}
       </div>
-
-      {/* Type Badge */}
-      <div className="flex items-center justify-between mb-3">
-        <span
-          className={`text-xs px-3 py-1 rounded-full font-bold ${getTypeColor(
-            data.type
-          )}`}
-        >
-          {data.type.toUpperCase()}
-        </span>
-        <span className="text-lg">{getTypeIcon(data.type)}</span>
-      </div>
-
-      {/* Title */}
-      <h3
-        className={`font-bold mb-2 leading-tight ${
-          data.type === "visi"
-            ? "text-lg text-purple-800"
-            : "text-sm text-gray-900"
-        }`}
-      >
-        {data.name}
-      </h3>
-
-      {/* Description */}
-      {data.description && (
-        <p className="text-xs text-gray-600 mb-2">{data.description}</p>
-      )}
-
-      {/* OPD */}
-      {data.opd && (
-        <div className="flex items-center text-xs text-gray-600 mb-3">
-          <Building2 className="h-3 w-3 mr-1" />
-          {data.opd}
-        </div>
-      )}
-
-      <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
 
       {/* Add Child Form */}
       {showAddForm && (
@@ -213,7 +213,7 @@ const CascadingNode = ({ data }) => {
           <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">
-                Tambah {getNextType(data.type).toUpperCase()}
+                Tambah {getNextType(node.type).toUpperCase()}
               </h3>
               <button onClick={() => setShowAddForm(false)}>
                 <X className="h-5 w-5 text-gray-500" />
@@ -251,7 +251,7 @@ const CascadingNode = ({ data }) => {
                 />
               </div>
 
-              {(newChild.type === "opd" || newChild.type === "program") && (
+              {(newChild.type === "opd" || newChild.type === "program" || newChild.type === "kegiatan" || newChild.type === "sub_kegiatan") && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {newChild.type === "opd"
@@ -296,7 +296,7 @@ const CascadingNode = ({ data }) => {
           <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">
-                Edit {data.type.toUpperCase()}
+                Edit {node.type.toUpperCase()}
               </h3>
               <button onClick={() => setShowEditForm(false)}>
                 <X className="h-5 w-5 text-gray-500" />
@@ -332,7 +332,7 @@ const CascadingNode = ({ data }) => {
                 />
               </div>
 
-              {(data.type === "opd" || data.type === "program") && (
+              {(node.type === "opd" || node.type === "program" || node.type === "kegiatan" || node.type === "sub_kegiatan") && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     OPD
@@ -367,13 +367,38 @@ const CascadingNode = ({ data }) => {
           </div>
         </div>
       )}
+
+      {/* Connector Line */}
+      {hasChildren && isExpanded && (
+        <div className="w-px h-8 bg-gray-300 mt-3"></div>
+      )}
+
+      {/* Children */}
+      {hasChildren && isExpanded && (
+        <div className="relative mt-0">
+          {node.children.length > 1 && (
+            <div className="absolute top-0 left-0 right-0 h-px bg-gray-300 transform translate-y-0"></div>
+          )}
+          
+          <div className="flex items-start justify-center space-x-8 pt-8">
+            {node.children.map((child, index) => (
+              <div key={child.id} className="relative flex flex-col items-center">
+                <div className="w-px h-8 bg-gray-300 -mt-8"></div>
+                <CascadingNode 
+                  node={child} 
+                  level={level + 1}
+                  isRoot={false}
+                  onAddChild={onAddChild}
+                  onEditNode={onEditNode}
+                  onDeleteNode={onDeleteNode}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-// Node types
-const nodeTypes = {
-  cascadingNode: CascadingNode,
 };
 
 const CascadingPerformance = ({ period = "2024" }) => {
@@ -390,8 +415,6 @@ const CascadingPerformance = ({ period = "2024" }) => {
     children: []
   });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
 
@@ -449,12 +472,7 @@ const CascadingPerformance = ({ period = "2024" }) => {
     linkElement.click();
   };
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
-  const findNodeById = useCallback((node, id) => {
+  const findNodeById = (node, id) => {
     if (node.id === id) return node;
     if (node.children) {
       for (let child of node.children) {
@@ -463,38 +481,32 @@ const CascadingPerformance = ({ period = "2024" }) => {
       }
     }
     return null;
-  }, []);
+  };
 
-  const handleAddChild = useCallback(
-    (parentId, childData) => {
-      setCascadingData((prevData) => {
-        const newData = JSON.parse(JSON.stringify(prevData));
-        const parent = findNodeById(newData, parentId);
-        if (parent) {
-          if (!parent.children) parent.children = [];
-          parent.children.push(childData);
-        }
-        return newData;
-      });
-    },
-    [findNodeById]
-  );
+  const handleAddChild = (parentId, childData) => {
+    setCascadingData((prevData) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      const parent = findNodeById(newData, parentId);
+      if (parent) {
+        if (!parent.children) parent.children = [];
+        parent.children.push(childData);
+      }
+      return newData;
+    });
+  };
 
-  const handleEditNode = useCallback(
-    (nodeId, updatedData) => {
-      setCascadingData((prevData) => {
-        const newData = JSON.parse(JSON.stringify(prevData));
-        const node = findNodeById(newData, nodeId);
-        if (node) {
-          Object.assign(node, updatedData);
-        }
-        return newData;
-      });
-    },
-    [findNodeById]
-  );
+  const handleEditNode = (nodeId, updatedData) => {
+    setCascadingData((prevData) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      const node = findNodeById(newData, nodeId);
+      if (node) {
+        Object.assign(node, updatedData);
+      }
+      return newData;
+    });
+  };
 
-  const handleDeleteNode = useCallback((nodeId) => {
+  const handleDeleteNode = (nodeId) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus node ini?")) {
       setCascadingData((prevData) => {
         const newData = JSON.parse(JSON.stringify(prevData));
@@ -513,80 +525,7 @@ const CascadingPerformance = ({ period = "2024" }) => {
         return newData;
       });
     }
-  }, []);
-
-  // Convert tree data to React Flow nodes and edges
-  const generateNodesAndEdges = useCallback(
-    (data) => {
-      const nodes = [];
-      const edges = [];
-      let nodeId = 0;
-
-      const traverse = (
-        node,
-        parentId = null,
-        level = 0,
-        siblingIndex = 0,
-        totalSiblings = 1
-      ) => {
-        const currentNodeId = `node-${nodeId++}`;
-
-        // Calculate position
-        const levelSpacing = 200;
-        const siblingSpacing = 350;
-        const x =
-          siblingIndex * siblingSpacing -
-          ((totalSiblings - 1) * siblingSpacing) / 2;
-        const y = level * levelSpacing;
-
-        nodes.push({
-          id: currentNodeId,
-          type: "cascadingNode",
-          position: { x, y },
-          data: {
-            ...node,
-            onAddChild: handleAddChild,
-            onEditNode: handleEditNode,
-            onDeleteNode: handleDeleteNode,
-          },
-        });
-
-        if (parentId) {
-          edges.push({
-            id: `edge-${parentId}-${currentNodeId}`,
-            source: parentId,
-            target: currentNodeId,
-            type: "smoothstep",
-            style: { stroke: "#94a3b8", strokeWidth: 2 },
-          });
-        }
-
-        if (node.children && node.children.length > 0) {
-          node.children.forEach((child, index) => {
-            traverse(
-              child,
-              currentNodeId,
-              level + 1,
-              index,
-              node.children.length
-            );
-          });
-        }
-      };
-
-      traverse(data);
-      return { nodes, edges };
-    },
-    [handleAddChild, handleEditNode, handleDeleteNode]
-  );
-
-  // Update nodes and edges when data changes
-  useEffect(() => {
-    const { nodes: newNodes, edges: newEdges } =
-      generateNodesAndEdges(cascadingData);
-    setNodes(newNodes);
-    setEdges(newEdges);
-  }, [cascadingData, generateNodesAndEdges, setNodes, setEdges]);
+  };
 
   return (
     <div className="w-full bg-gray-50 rounded-lg border overflow-hidden">
@@ -658,47 +597,29 @@ const CascadingPerformance = ({ period = "2024" }) => {
             <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
             <span className="text-gray-600">Program</span>
           </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-indigo-500 rounded-full"></span>
+            <span className="text-gray-600">Kegiatan</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-pink-500 rounded-full"></span>
+            <span className="text-gray-600">Sub Kegiatan</span>
+          </div>
         </div>
       </div>
 
-      {/* React Flow Content */}
-      <div className="h-[600px] bg-gray-50">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          fitView
-          fitViewOptions={{
-            padding: 0.2,
-          }}
-        >
-          <Controls />
-          <MiniMap
-            nodeColor={(node) => {
-              switch (node.data.type) {
-                case "visi":
-                  return "#8b5cf6";
-                case "misi":
-                  return "#3b82f6";
-                case "tujuan":
-                  return "#10b981";
-                case "sasaran":
-                  return "#f59e0b";
-                case "opd":
-                  return "#ef4444";
-                case "program":
-                  return "#f97316";
-                default:
-                  return "#6b7280";
-              }
-            }}
-            className="bg-white"
+      {/* Tree Content */}
+      <div className="p-8 overflow-x-auto">
+        <div className="min-w-max flex justify-center">
+          <CascadingNode 
+            node={cascadingData} 
+            level={0}
+            isRoot={true}
+            onAddChild={handleAddChild}
+            onEditNode={handleEditNode}
+            onDeleteNode={handleDeleteNode}
           />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
+        </div>
       </div>
 
       {/* Instructions */}
@@ -707,8 +628,7 @@ const CascadingPerformance = ({ period = "2024" }) => {
           Klik tombol <Plus className="h-3 w-3 inline mx-1" /> untuk menambah
           child,
           <Edit className="h-3 w-3 inline mx-1" /> untuk edit,
-          <Trash2 className="h-3 w-3 inline mx-1" /> untuk hapus node. Gunakan
-          mouse untuk drag, zoom, dan pan.
+          <Trash2 className="h-3 w-3 inline mx-1" /> untuk hapus node
         </p>
       </div>
     </div>

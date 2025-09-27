@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Save, X, RefreshCw, AlertCircle, CheckCircle, ChevronDown, ChevronUp, Building2, Target, FileText } from 'lucide-react';
 import { cascadingAPI } from '../utils/supabase';
 import { cascadingCRUD } from '../utils/cascadingCRUD';
+import { sampleDataGenerator } from '../utils/sampleDataGenerator';
+import EmptyStateHandler from './EmptyStateHandler';
 
 const CascadingNode = ({ node, level = 0, onAddChild, onEditNode, onDeleteNode, autoSaveStatus }) => {
   const [isExpanded, setIsExpanded] = useState(level < 4);
@@ -501,19 +503,71 @@ const CascadingPerformanceDiagram = ({ period = '2024' }) => {
     );
   }
 
+  // Empty state handlers
+  const handleCreateSample = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.generateSamplePerformanceTree();
+      if (result.success) {
+        alert('Sample data berhasil dibuat! Memuat ulang...');
+        await loadCascadingData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateManual = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.createStarterData();
+      if (result.success) {
+        alert('Data starter berhasil dibuat! Silakan tambahkan Misi dan struktur lainnya.');
+        await loadCascadingData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadTemplate = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.loadTemplate('pemda');
+      if (result.success) {
+        alert('Template PEMDA berhasil dimuat!');
+        await loadCascadingData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImportData = () => {
+    alert('Fitur import data akan segera tersedia. Untuk saat ini, gunakan template atau buat manual.');
+  };
+
   if (!cascadingData) {
     return (
-      <div className="w-full bg-gray-50 rounded-lg border overflow-hidden">
-        <div className="p-8 text-center">
-          <p className="text-gray-600">Tidak ada data cascading</p>
-          <button 
-            onClick={manualRefresh}
-            className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
-          >
-            Muat Ulang
-          </button>
-        </div>
-      </div>
+      <EmptyStateHandler
+        type="cascading"
+        onCreateSample={handleCreateSample}
+        onCreateManual={handleCreateManual}
+        onLoadTemplate={handleLoadTemplate}
+        onImportData={handleImportData}
+      />
     );
   }
 

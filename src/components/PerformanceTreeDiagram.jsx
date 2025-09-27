@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Target, Building2, ChevronDown, ChevronUp, Plus, Edit, Trash2, Save, X, Database, Download, Loader } from 'lucide-react';
 import { performanceTreeAPI } from '../utils/supabase';
 import { performanceTreeCRUD } from '../utils/performanceTreeCRUDFixed';
+import { sampleDataGenerator } from '../utils/sampleDataGenerator';
+import EmptyStateHandler from './EmptyStateHandler';
 
 const PerformanceNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNode, onDeleteNode, autoSaveStatus }) => {
   const [isExpanded, setIsExpanded] = useState(level < 2);
@@ -691,19 +693,71 @@ const PerformanceTreeDiagram = ({ period = '2024' }) => {
     );
   }
 
+  // Empty state handlers
+  const handleCreateSample = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.generateSamplePerformanceTree();
+      if (result.success) {
+        alert('Sample data berhasil dibuat! Memuat ulang...');
+        await loadPerformanceTreeData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateManual = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.createStarterData();
+      if (result.success) {
+        alert('Data starter berhasil dibuat! Silakan tambahkan Misi dan struktur lainnya.');
+        await loadPerformanceTreeData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadTemplate = async () => {
+    setLoading(true);
+    try {
+      const result = await sampleDataGenerator.loadTemplate('pemda');
+      if (result.success) {
+        alert('Template PEMDA berhasil dimuat!');
+        await loadPerformanceTreeData();
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImportData = () => {
+    alert('Fitur import data akan segera tersedia. Untuk saat ini, gunakan template atau buat manual.');
+  };
+
   if (!treeData) {
     return (
-      <div className="w-full bg-gray-50 rounded-lg border overflow-hidden">
-        <div className="p-8 text-center">
-          <p className="text-gray-600">Tidak ada data pohon kinerja</p>
-          <button 
-            onClick={manualRefresh}
-            className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
-          >
-            Muat Ulang
-          </button>
-        </div>
-      </div>
+      <EmptyStateHandler
+        type="performance-tree"
+        onCreateSample={handleCreateSample}
+        onCreateManual={handleCreateManual}
+        onLoadTemplate={handleLoadTemplate}
+        onImportData={handleImportData}
+      />
     );
   }
 

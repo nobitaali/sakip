@@ -10,7 +10,8 @@ import ReactFlow, {
   Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { Plus, Edit, Trash2, Save, X, Building2 } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Building2, Database, Download } from "lucide-react";
+import { cascadingAPI } from '../utils/supabase';
 
 // Custom Node Component for Cascading Performance
 const CascadingNode = ({ data }) => {
@@ -36,11 +37,13 @@ const CascadingNode = ({ data }) => {
       "sasaran",
       "opd",
       "program",
+      "kegiatan",
+      "sub_kegiatan",
     ];
     const currentIndex = typeHierarchy.indexOf(currentType);
     return currentIndex < typeHierarchy.length - 1
       ? typeHierarchy[currentIndex + 1]
-      : "program";
+      : "sub_kegiatan";
   }
 
   const getTypeColor = (type) => {
@@ -51,6 +54,8 @@ const CascadingNode = ({ data }) => {
       sasaran: "bg-yellow-500 text-white border-yellow-500",
       opd: "bg-red-500 text-white border-red-500",
       program: "bg-orange-500 text-white border-orange-500",
+      kegiatan: "bg-indigo-500 text-white border-indigo-500",
+      sub_kegiatan: "bg-pink-500 text-white border-pink-500",
     };
     return colors[type] || "bg-gray-500 text-white border-gray-500";
   };
@@ -69,6 +74,10 @@ const CascadingNode = ({ data }) => {
         return "🏢";
       case "program":
         return "⚡";
+      case "kegiatan":
+        return "📝";
+      case "sub_kegiatan":
+        return "📌";
       default:
         return "📄";
     }
@@ -369,7 +378,7 @@ const nodeTypes = {
 
 const CascadingPerformance = ({ period = "2024" }) => {
   // untuk level pemda {}
-  // diagramnya sampai leve opd / organisasi perangkat daerah contoh dinas pendidikan,kecamatan,
+  // diagramnya sampai level opd / organisasi perangkat daerah contoh dinas pendidikan,kecamatan,
   // untuk level atau user opd
   //diagramnya
 
@@ -377,118 +386,68 @@ const CascadingPerformance = ({ period = "2024" }) => {
     id: "1",
     name: "Visi Kepala Daerah",
     type: "visi",
-    description: "Terwujudnya Daerah yang Maju, Sejahtera, dan Berkelanjutan",
-    children: [
-      {
-        id: "2",
-        name: "Misi 1: Meningkatkan Kualitas SDM",
-        type: "misi",
-        description: "Meningkatkan kualitas sumber daya manusia",
-        children: [
-          {
-            id: "3",
-            name: "Tujuan 1: Peningkatan Pembangunan Manusia",
-            type: "tujuan",
-            description: "Meningkatkan kualitas pendidikan dan kesehatan",
-            children: [
-              {
-                id: "4",
-                name: "Sasaran 1: Peningkatan Kualitas Pendidikan",
-                type: "sasaran",
-                description: "Meningkatkan angka partisipasi sekolah",
-                children: [
-                  {
-                    id: "5",
-                    name: "Dinas Pendidikan", //
-                    type: "opd",
-                    opd: "Dinas Pendidikan",
-                    children: [
-                      {
-                        id: "6",
-                        name: "Peningkatan kualitas pendidikan",
-                        type: "tujuan",
-                        opd: "Dinas Pendidikan",
-                        children: [
-                          {
-                            id: "6",
-                            type: "sasaran ",
-                            name: "Meningkatkan akses pendidikan",
-                            children: [
-                              {
-                                id: "7",
-                                name: "Program Peningkatan Sarana Prasarana",
-                                type: "program",
-                                opd: "Dinas Pendidikan",
-                                children: [
-                                  {
-                                    id: "6",
-                                    type: "Kegiatan ",
-                                    name: "Pengadaan alat penunjang pendidikan ",
-                                    children:[
-                                      {  id: "6",
-                                         opd: "Dinas Pendidikan",
-                                    type: "Sub Kegiatan ",
-                                    name: "Pengadaan laptop",}
-                                    ]
-                                  },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "8",
-        name: "Misi 2: Meningkatkan Infrastruktur",
-        type: "misi",
-        description: "Membangun infrastruktur yang berkualitas",
-        children: [
-          {
-            id: "9",
-            name: "Tujuan 2: Peningkatan Infrastruktur Daerah",
-            type: "tujuan",
-            description: "Meningkatkan kualitas infrastruktur",
-            children: [
-              {
-                id: "10",
-                name: "Sasaran 2: Peningkatan Kualitas Jalan",
-                type: "sasaran",
-                description: "Meningkatkan kondisi jalan daerah",
-                children: [
-                  {
-                    id: "11",
-                    name: "Dinas PU",
-                    type: "opd",
-                    opd: "Dinas Pekerjaan Umum",
-                    children: [
-                      {
-                        id: "12",
-                        name: "Program Pembangunan Jalan",
-                        type: "program",
-                        opd: "Dinas PU",
-                        children: [],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+    description: "Masukkan visi kepala daerah",
+    children: []
   });
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [loading, setLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+
+  // Load data from Supabase on component mount
+  useEffect(() => {
+    loadCascadingData();
+  }, []);
+
+  const loadCascadingData = async () => {
+    setLoading(true);
+    try {
+      const result = await cascadingAPI.loadCascading('1');
+      if (result.success && result.data) {
+        setCascadingData(result.data);
+      }
+    } catch (error) {
+      console.error('Error loading cascading data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveToSupabase = async () => {
+    setLoading(true);
+    setSaveStatus('Menyimpan...');
+    
+    try {
+      const result = await cascadingAPI.saveCascading(cascadingData);
+      
+      if (result.success) {
+        setSaveStatus('Data berhasil disimpan ke Supabase!');
+        setTimeout(() => setSaveStatus(''), 3000);
+      } else {
+        setSaveStatus('Gagal menyimpan data');
+        setTimeout(() => setSaveStatus(''), 3000);
+      }
+    } catch (error) {
+      console.error('Error saving to Supabase:', error);
+      setSaveStatus('Error: ' + error.message);
+      setTimeout(() => setSaveStatus(''), 3000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const exportData = () => {
+    const dataStr = JSON.stringify(cascadingData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `cascading-performance-${period}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -633,7 +592,7 @@ const CascadingPerformance = ({ period = "2024" }) => {
     <div className="w-full bg-gray-50 rounded-lg border overflow-hidden">
       {/* Header */}
       <div className="p-6 bg-white border-b border-gray-200">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
               Cascading Performance
@@ -642,31 +601,62 @@ const CascadingPerformance = ({ period = "2024" }) => {
               Struktur cascading dari visi hingga program - {period}
             </p>
           </div>
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
-              <span className="text-gray-600">Visi</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
-              <span className="text-gray-600">Misi</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-              <span className="text-gray-600">Tujuan</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-              <span className="text-gray-600">Sasaran</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-              <span className="text-gray-600">OPD</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
-              <span className="text-gray-600">Program</span>
-            </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={saveToSupabase}
+              disabled={loading}
+              className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              {loading ? 'Menyimpan...' : 'Simpan ke Supabase'}
+            </button>
+            <button
+              onClick={exportData}
+              className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export JSON
+            </button>
+          </div>
+        </div>
+        
+        {/* Save Status */}
+        {saveStatus && (
+          <div className={`mb-4 p-3 rounded-md text-sm ${
+            saveStatus.includes('berhasil') 
+              ? 'bg-green-100 text-green-700 border border-green-200' 
+              : saveStatus.includes('Error') || saveStatus.includes('Gagal')
+              ? 'bg-red-100 text-red-700 border border-red-200'
+              : 'bg-blue-100 text-blue-700 border border-blue-200'
+          }`}>
+            {saveStatus}
+          </div>
+        )}
+        
+        <div className="flex items-center space-x-4 text-sm">
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
+            <span className="text-gray-600">Visi</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
+            <span className="text-gray-600">Misi</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            <span className="text-gray-600">Tujuan</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
+            <span className="text-gray-600">Sasaran</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+            <span className="text-gray-600">OPD</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
+            <span className="text-gray-600">Program</span>
           </div>
         </div>
       </div>

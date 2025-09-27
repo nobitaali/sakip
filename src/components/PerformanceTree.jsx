@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Target, Building2, ChevronDown, ChevronUp, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Target, Building2, ChevronDown, ChevronUp, Plus, Edit, Trash2, Save, X, Database, Download } from 'lucide-react';
+import { performanceTreeAPI, outcomesAPI } from '../utils/supabase';
 
 const PerformanceNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNode, onDeleteNode }) => {
   const [isExpanded, setIsExpanded] = useState(level < 2);
@@ -176,6 +177,21 @@ const PerformanceNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNo
         <h3 className={`font-bold mb-2 leading-tight ${isRoot ? 'text-lg text-primary-800' : 'text-sm text-gray-900'}`}>
           {node.label}
         </h3>
+
+        {/* Indicators */}
+        {node.indicators && node.indicators.length > 0 && (
+          <div className="mb-3">
+            <p className="text-xs font-medium text-gray-700 mb-1">Indikator:</p>
+            <ul className="text-xs text-gray-600 space-y-1">
+              {node.indicators.map((indicator, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="w-1 h-1 bg-gray-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
+                  {indicator}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* OPD */}
         {node.opd && (
@@ -472,109 +488,117 @@ const PerformanceNode = ({ node, level = 0, isRoot = false, onAddChild, onEditNo
 };
 
 const PerformanceTree = ({ period = '2024' }) => {
-  const [treeData, setTreeData] = useState({ //ultimate outcome bisa lebih dari 1 
+  const [treeData, setTreeData] = useState({
     id: '1',
-    label: 'Penurunan kemiskinan',
-    type: 'ULTIMATE OUTCOME',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
-    achievement: 85.2,
-    target: 90,
+    label: 'Pohon Kinerja Organisasi',
+    type: 'ULTIMATE OUTCOME',
+    indicators: [],
+    achievement: 0,
+    target: 100,
     status: 'at_risk',
     trend: 'up',
-    children: [
-      {
-        id: '2',
-        label: 'Pembangunan SDM Berkualitas', // isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
-        type: 'INTERMEDIATE OUTCOME',
-        achievement: 78.5,
-        target: 85,
-        status: 'at_risk',
-        trend: 'up',
-        children: [
-          {
-            id: '5',
-            label: 'Penignkatakan kualitas pendidikan',
-            type: 'IMMEDIATE OUTCOME LEVEL 1',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
-            achievement: 78.3,
-            target: 85,
-            status: 'at_risk',
-            trend: 'up',
-            opd: 'Dinas Pendidikan',
-            children: [
-              {
-                id: '11',
-                label: 'Peningkatan akses pendidikan',// isinya cuman ada 2 {1.nama outcome 2. indikator: angka kemiskinan/ persentase pendududk miskin (indikator setiap outcome bisa lebih dari 1)}
-                  type: 'IMMEDIATE OUTCOME LEVEL 2',
-                achievement: 78.3,
-                target: 85,
-                status: 'at_risk',
-                trend: 'up',
-                opd: 'Dinas Pendidikan',
-                children: [{
-                  id: '3',
-                label: 'Jumlah sekolah',
-                type: 'OUTPUT',
-                achievement: 78.3,
-                target: 85,
-                status: 'at_risk',
-                trend: 'up',
-                opd: 'Dinas Pendidikan',
-                }
-
-                  
-                ]
-              },
-              {
-                id: '11',
-                label: 'Angka Partisipasi Sekolah',
-                type: 'IMMEDIATE OUTCOME LEVEL 2',
-                achievement: 78.3,
-                target: 85,
-                status: 'at_risk',
-                trend: 'up',
-                opd: 'Dinas Pendidikan',
-                children: []
-              }
-            ]
-          },
-          {
-            id: '5',
-            label: 'Kualitas kesehatan',
-            type: 'IMMEDIATE OUTCOME',
-            achievement: 78.3,
-            target: 85,
-            status: 'at_risk',
-            trend: 'up',
-            opd: 'Dinas Pendidikan',
-            children: [
-              {
-                id: '11',
-                label: 'Jumlah Rumahsakit',
-                type: 'Outpur',
-                achievement: 78.3,
-                target: 85,
-                status: 'at_risk',
-                trend: 'up',
-                opd: 'Dinas Pendidikan',
-                children: []
-              },
-               {
-                id: '11',
-                label: 'Jumlah Tenaga Medis',
-                type: 'Outpur',
-                achievement: 78.3,
-                target: 85,
-                status: 'at_risk',
-                trend: 'up',
-                opd: 'Dinas Pendidikan',
-                children: []
-              },
-             
-            ]
-          }
-        ]
-      }
-    ]
+    children: []
   });
+
+  const [outcomes, setOutcomes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+
+  // Load data from Supabase on component mount
+  useEffect(() => {
+    loadPerformanceTreeData();
+    loadOutcomes();
+  }, []);
+
+  const loadPerformanceTreeData = async () => {
+    setLoading(true);
+    try {
+      const result = await performanceTreeAPI.loadPerformanceTree('1');
+      if (result.success && result.data) {
+        setTreeData(result.data);
+      }
+    } catch (error) {
+      console.error('Error loading performance tree:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadOutcomes = async () => {
+    try {
+      const result = await outcomesAPI.getAllOutcomes();
+      if (result.success) {
+        setOutcomes(result.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading outcomes:', error);
+    }
+  };
+
+  const saveToSupabase = async () => {
+    setLoading(true);
+    setSaveStatus('Menyimpan...');
+    
+    try {
+      // Save performance tree
+      const treeResult = await performanceTreeAPI.savePerformanceTree(treeData);
+      
+      if (treeResult.success) {
+        // Extract and save outcomes
+        const extractedOutcomes = extractOutcomes(treeData);
+        
+        for (const outcome of extractedOutcomes) {
+          await outcomesAPI.saveOutcome(outcome);
+        }
+        
+        setSaveStatus('Data berhasil disimpan ke Supabase!');
+        setTimeout(() => setSaveStatus(''), 3000);
+      } else {
+        setSaveStatus('Gagal menyimpan data');
+        setTimeout(() => setSaveStatus(''), 3000);
+      }
+    } catch (error) {
+      console.error('Error saving to Supabase:', error);
+      setSaveStatus('Error: ' + error.message);
+      setTimeout(() => setSaveStatus(''), 3000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const extractOutcomes = (node, outcomes = []) => {
+    if (node.type && node.type.includes('OUTCOME')) {
+      outcomes.push({
+        id: node.id,
+        name: node.label,
+        type: node.type,
+        indicators: node.indicators || [],
+        achievement: node.achievement,
+        target: node.target,
+        status: node.status,
+        trend: node.trend,
+        opd: node.opd
+      });
+    }
+    
+    if (node.children) {
+      node.children.forEach(child => extractOutcomes(child, outcomes));
+    }
+    
+    return outcomes;
+  };
+
+  const exportData = () => {
+    const dataStr = JSON.stringify(treeData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `pohon-kinerja-${period}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
 
   const findNodeById = (node, id) => {
     if (node.id === id) return node;
@@ -635,24 +659,55 @@ const PerformanceTree = ({ period = '2024' }) => {
     <div className="w-full bg-gray-50 rounded-lg border overflow-hidden">
       {/* Header */}
       <div className="p-6 bg-white border-b border-gray-200">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Pohon Kinerja Organisasi</h3>
             <p className="text-sm text-gray-600">Struktur hirarki kinerja daerah periode {period}</p>
           </div>
-          <div className="flex items-center space-x-6 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-success-500 rounded-full"></div>
-              <span className="text-gray-600">On Track</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-warning-500 rounded-full"></div>
-              <span className="text-gray-600">Perlu Perhatian</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-danger-500 rounded-full"></div>
-              <span className="text-gray-600">Kritis</span>
-            </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={saveToSupabase}
+              disabled={loading}
+              className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              {loading ? 'Menyimpan...' : 'Simpan ke Supabase'}
+            </button>
+            <button
+              onClick={exportData}
+              className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export JSON
+            </button>
+          </div>
+        </div>
+        
+        {/* Save Status */}
+        {saveStatus && (
+          <div className={`mb-4 p-3 rounded-md text-sm ${
+            saveStatus.includes('berhasil') 
+              ? 'bg-green-100 text-green-700 border border-green-200' 
+              : saveStatus.includes('Error') || saveStatus.includes('Gagal')
+              ? 'bg-red-100 text-red-700 border border-red-200'
+              : 'bg-blue-100 text-blue-700 border border-blue-200'
+          }`}>
+            {saveStatus}
+          </div>
+        )}
+        
+        <div className="flex items-center space-x-6 text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-success-500 rounded-full"></div>
+            <span className="text-gray-600">On Track</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-warning-500 rounded-full"></div>
+            <span className="text-gray-600">Perlu Perhatian</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-danger-500 rounded-full"></div>
+            <span className="text-gray-600">Kritis</span>
           </div>
         </div>
       </div>
